@@ -16,23 +16,6 @@ class CreateTables extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->date('published_at')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('comments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('post_id');
-            $table->string('body');
-            $table->date('published_at')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('videos', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('title');
-            $table->string('subtitle')->nullable();
-            $table->date('published_at')->nullable();
             $table->timestamps();
         });
     }

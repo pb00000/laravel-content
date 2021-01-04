@@ -4,10 +4,13 @@ namespace ProtoneMedia\LaravelContent\Fields;
 
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Traits\ForwardsCalls;
 use ProtoneMedia\LaravelContent\Middleware\MiddlewareThroughPipeline;
 
 class FromInput
 {
+    use ForwardsCalls;
+
     protected $fieldClass;
     protected $arguments;
     protected $middleware;
@@ -39,6 +42,20 @@ class FromInput
 
         $result = Arr::wrap($result);
 
-        return new $this->fieldClass(...$result);
+        $fieldClass = $this->fieldClass;
+
+        return new $fieldClass(...$result);
+    }
+
+    /**
+     * Handle dynamic method calls into the field.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->forwardCallTo($this->resolve(), $method, $parameters);
     }
 }

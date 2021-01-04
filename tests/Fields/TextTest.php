@@ -29,18 +29,18 @@ class TextTest extends TestCase
     {
         // trim
         $text = Text::fromInput('test ');
-        $this->assertEquals('test', $text->resolve()->getValue());
+        $this->assertEquals('test', $text->getValue());
 
         // empty
         $text = Text::fromInput(' ');
-        $this->assertEquals(null, $text->resolve()->getValue());
+        $this->assertEquals(null, $text->getValue());
     }
 
     /** @test */
     public function it_can_override_the_middlware()
     {
         $text = Text::fromInput('test ')->withMiddleware([]);
-        $this->assertEquals('test ', $text->resolve()->getValue());
+        $this->assertEquals('test ', $text->getValue());
     }
 
     /** @test */

@@ -6,9 +6,9 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 class EloquentCaster implements CastsAttributes
 {
-    private $fieldClass;
+    private string $fieldClass;
 
-    public function __construct($fieldClass)
+    public function __construct(string $fieldClass)
     {
         $this->fieldClass = $fieldClass;
     }

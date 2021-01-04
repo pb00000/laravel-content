@@ -14,14 +14,6 @@ class Text extends Field implements Htmlable
         $this->value = $value;
     }
 
-    public static function fromInput(...$arguments): FromInput
-    {
-        return (new FromInput(static::class, ...$arguments))->withMiddleware([
-            TrimString::class,
-            ConvertEmptyStringToNull::class,
-        ]);
-    }
-
     public static function fromDatabase($model, string $key, $value, array $attributes)
     {
         return new static($value);
@@ -32,19 +24,24 @@ class Text extends Field implements Htmlable
         return $this->value;
     }
 
+    //
+
+    public static function defaultInputMiddleware(): array
+    {
+        return [
+            TrimString::class,
+            ConvertEmptyStringToNull::class,
+        ];
+    }
+
     public function defaultRules(): array
     {
         return ['string'];
     }
 
-    public function getRawValue()
+    public function getValue(): string
     {
-        return $this->value;
-    }
-
-    public function getValue()
-    {
-        return $this->value;
+        return $this->value ?: '';
     }
 
     public function toHtml(): HtmlString

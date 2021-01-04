@@ -10,7 +10,13 @@ abstract class Field implements Htmlable, Castable
 {
     protected $rules;
 
-    // abstract public static function fromInput($value = null): self;
+    abstract public static function defaultInputMiddleware(): array;
+
+    public static function fromInput(...$arguments): FromInput
+    {
+        return (new FromInput(static::class, ...$arguments))
+            ->withMiddleware(static::defaultInputMiddleware());
+    }
 
     protected static function middleware($traveler = null, $stops)
     {

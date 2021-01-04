@@ -1,0 +1,54 @@
+{
+    "name": "protonemedia/laravel-content",
+    "description": "Laravel package to search through multiple Eloquent models. Supports pagination, eager loading relations, single/multiple columns, sorting and scoped queries.",
+    "keywords": [
+        "protonemedia",
+        "laravel-content"
+    ],
+    "homepage": "https://github.com/protonemedia/laravel-content",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Pascal Baljet",
+            "email": "pascal@protone.media",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "brianium/paratest": "^6.1",
+        "illuminate/support": "^6.0|^7.0|^8.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.3.3",
+        "orchestra/testbench": "^4.0|^5.0|^6.0",
+        "phpunit/phpunit": "^8.5|^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProtoneMedia\\LaravelContent\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ProtoneMedia\\LaravelContent\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ProtoneMedia\\LaravelContent\\ServiceProvider"
+            ]
+        }
+    }
+}

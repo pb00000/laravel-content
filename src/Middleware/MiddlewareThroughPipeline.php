@@ -13,16 +13,14 @@ class MiddlewareThroughPipeline
 
     public function execute($arguments)
     {
-        $middleware = $this->middleware;
-
-        if (is_callable($middleware)) {
-            return $middleware(...$arguments);
+        if (is_callable($this->middleware)) {
+            return ($this->middleware)(...$arguments);
         }
 
-        if (is_object($middleware)) {
-            return $middleware->execute(...$arguments);
+        if (is_object($this->middleware)) {
+            return $this->middleware->execute(...$arguments);
         }
 
-        return app()->make($middleware)->execute(...$arguments);
+        return app()->make($this->middleware)->execute(...$arguments);
     }
 }

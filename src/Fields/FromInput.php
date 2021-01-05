@@ -34,7 +34,7 @@ class FromInput
             return new MiddlewareThroughPipeline($middleware);
         }, $this->middleware ?: []);
 
-        $result = app(Pipeline::class)
+        $result = (new Pipeline)
             ->send($this->arguments)
             ->through($middleware)
             ->via('execute')

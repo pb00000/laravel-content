@@ -10,7 +10,10 @@ abstract class Field implements Htmlable, Castable
 {
     protected $rules;
 
-    abstract public static function defaultInputMiddleware(): array;
+    public static function defaultInputMiddleware(): array
+    {
+        return [];
+    }
 
     public static function fromInput(...$arguments): FromInput
     {
@@ -40,7 +43,10 @@ abstract class Field implements Htmlable, Castable
 
     //
 
-    abstract public function defaultRules(): array;
+    public function defaultRules(): array
+    {
+        return [];
+    }
 
     public function getRules(): array
     {

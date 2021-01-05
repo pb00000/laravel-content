@@ -37,7 +37,7 @@ class TextTest extends TestCase
     }
 
     /** @test */
-    public function it_can_override_the_middlware()
+    public function it_can_override_the_middleware()
     {
         $text = Text::fromInput('test ')->withMiddleware([]);
         $this->assertEquals('test ', $text->getValue());

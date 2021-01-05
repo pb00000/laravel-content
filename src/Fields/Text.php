@@ -9,6 +9,8 @@ use ProtoneMedia\LaravelContent\Middleware\TrimString;
 
 class Text extends Field implements Htmlable
 {
+    protected $value;
+
     public function __construct(string $value = null)
     {
         $this->value = $value;

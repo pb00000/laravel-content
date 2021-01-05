@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use ProtoneMedia\LaravelContent\Middleware\MiddlewareHandler;
 
 abstract class Field implements Htmlable, Castable, Jsonable
 {
@@ -17,16 +18,29 @@ abstract class Field implements Htmlable, Castable, Jsonable
         return [];
     }
 
-    public static function fromInput(...$arguments): FromInput
+    public static function fromRequest($key, Request $request = null): FieldResolver
     {
-        return (new FromInput(static::class, ...$arguments))
-            ->withMiddleware(static::defaultInputMiddleware());
+        $request = $request ?: request();
+
+        return static::fromSource($request->all(), $key);
     }
 
-    public static function fromRequest(Request $request, ...$arguments): ExtractFieldFromRequest
+    public static function prepareRequestForValidation($key, Request $request = null)
     {
-        return (new FromRequest(static::class, $request, ...$arguments))
-            ->withMiddleware(static::defaultInputMiddleware());
+    }
+
+    public static function fromSource($source, $key): FieldResolver
+    {
+        return static::fromInput(data_get($source, $key));
+    }
+
+    public static function fromInput(...$source): FieldResolver
+    {
+        $handler = (new MiddlewareHandler)
+            ->withMiddleware(static::defaultInputMiddleware())
+            ->setPassable(...$source);
+
+        return new FieldResolver($handler, static::class);
     }
 
     //

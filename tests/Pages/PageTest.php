@@ -35,7 +35,12 @@ class PageTest extends TestCase
             UploadedFile::fake()->image('header.jpg')
         );
 
-        $post = TitleAndHeader::fromRequest($request)
+        $post = TitleAndHeader::loadFromRequest($request)
             ->saveAsJson(new Post, 'title');
+
+        $content = json_decode($post->title, true);
+
+        $this->assertEquals('New Title', $content['title']);
+        $this->assertIsArray($content['header']);
     }
 }

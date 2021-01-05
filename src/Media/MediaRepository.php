@@ -3,7 +3,6 @@
 namespace ProtoneMedia\LaravelContent\Media;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\File\File;
 
 interface MediaRepository
@@ -19,8 +18,6 @@ interface MediaRepository
     public function toArray($value): array;
 
     public function getFile($value): File;
-
-    public function fromRequest(Request $request): MediaRequest;
 
     public function storeTemporarily($file);
 

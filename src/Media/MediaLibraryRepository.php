@@ -3,7 +3,6 @@
 namespace ProtoneMedia\LaravelContent\Media;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use ProtoneMedia\LaravelContent\Models\TemporaryMediaLibraryMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdderFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -41,11 +40,6 @@ class MediaLibraryRepository implements MediaRepository
         return [
             'key' => $value->getKey(),
         ];
-    }
-
-    public function fromRequest(Request $request): MediaRequest
-    {
-        return new MediaRequest($this, $request);
     }
 
     public function storeTemporarily($file)

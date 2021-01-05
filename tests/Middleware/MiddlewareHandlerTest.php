@@ -1,8 +1,8 @@
 <?php
 
-namespace ProtoneMedia\LaravelContent\Tests\Fields;
+namespace ProtoneMedia\LaravelContent\Tests\Middleware;
 
-use ProtoneMedia\LaravelContent\Fields\FromInput;
+use ProtoneMedia\LaravelContent\Middleware\MiddlewareHandler;
 use ProtoneMedia\LaravelContent\Tests\TestCase;
 
 class ClassWithTwoArguments
@@ -17,14 +17,14 @@ class ClassWithTwoArguments
     }
 }
 
-class FromInputTest extends TestCase
+class MiddlewareHandlerTest extends TestCase
 {
     /** @test */
     public function it_can_handle_multiple_arguments()
     {
-        $fromInput = new FromInput(ClassWithTwoArguments::class, 1, 2);
+        $handler = new MiddlewareHandler();
 
-        $fromInput->withMiddleware([
+        $handler->withMiddleware([
             new class {
                 public function execute($one, $two)
                 {
@@ -33,7 +33,7 @@ class FromInputTest extends TestCase
             },
         ]);
 
-        $object = $fromInput->resolve();
+        $object = new ClassWithTwoArguments(...$handler->execute(1, 2));
 
         $this->assertEquals(2, $object->two);
         $this->assertEquals(4, $object->four);
@@ -42,15 +42,15 @@ class FromInputTest extends TestCase
     /** @test */
     public function it_can_a_callable_middleware()
     {
-        $fromInput = new FromInput(ClassWithTwoArguments::class, 1, 2);
+        $handler = new MiddlewareHandler();
 
-        $fromInput->withMiddleware([
+        $handler->withMiddleware([
             function ($one, $two) {
                 return [$one * 2, $two * 2];
             },
         ]);
 
-        $object = $fromInput->resolve();
+        $object = new ClassWithTwoArguments(...$handler->execute(1, 2));
 
         $this->assertEquals(2, $object->two);
         $this->assertEquals(4, $object->four);

@@ -24,12 +24,12 @@ class ImageUploadTest extends TestCase
         $this->app['router']->group(['middleware' => 'web'], function ($router) {
             $router->post('/upload', function (Request $request) {
                 return ImageModel::create([
-                    'title' => Image::fromRequest($request)->resolve('logo_image'),
+                    'title' => Image::fromRequest('logo_image', $request),
                 ]);
             });
 
             $router->post('/validate/{size?}', function (Request $request, $size = 10) {
-                Image::fromRequest($request)->prepareForValidation('logo_image');
+                Image::prepareRequestForValidation('logo_image', $request);
 
                 $request->validate([
                     'logo_image' => Image::empty()
@@ -51,8 +51,7 @@ class ImageUploadTest extends TestCase
             ->post('/upload', [
                 'logo_image' => UploadedFile::fake()->image('logo.png'),
             ])
-            ->assertCreated()
-            ->json();
+            ->assertCreated();
 
         $model = ImageModel::first();
         $field = $model->title;

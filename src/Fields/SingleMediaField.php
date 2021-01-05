@@ -2,13 +2,13 @@
 
 namespace ProtoneMedia\LaravelContent\Fields;
 
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Traits\ForwardsCalls;
+use ProtoneMedia\LaravelContent\Middleware\ResolveMedia;
 use ProtoneMedia\LaravelContent\Rules\SingleMedia;
 
 abstract class SingleMediaField extends Field implements Arrayable, Jsonable
@@ -21,6 +21,29 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
     public function allowedMimes(): array
     {
         return [];
+    }
+
+    public static function prepareRequestForValidation($key, Request $request = null)
+    {
+        $request = $request ?: request();
+
+        $input = $request->input($key);
+
+        if (!is_array($input)) {
+            return;
+        }
+
+        $repository = static::resolveDefaultRepository();
+
+        $media = $repository->find($input);
+
+        if (!$media) {
+            return;
+        }
+
+        $request->replace([
+            $key => $repository->getFile($media),
+        ]);
     }
 
     public function makeSingleMediaRule(): SingleMedia
@@ -95,19 +118,18 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
 
     //
 
-    public static function fromRequest(Request $request, ...$arguments): ExtractFieldFromRequest
+    public static function defaultInputMiddleware(): array
     {
-        return static::resolveDefaultRepository()
-            ->fromRequest($request)
-            ->setFieldClass(static::class);
+        return [
+            new ResolveMedia(static::resolveDefaultRepository()),
+        ];
     }
 
     public static function empty(): self
     {
-        return Container::getInstance()
-            ->makeWith(static::class, [
-                'repository' => static::resolveDefaultRepository(),
-            ]);
+        return app()->makeWith(static::class, [
+            'repository' => static::resolveDefaultRepository(),
+        ]);
     }
 
     //

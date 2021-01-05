@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 
 trait LoadsDataFromRequest
 {
-    public function parseArrayFromRequest(Request $request, array $data = [], $keyPrefix = null)
+    public function parseArrayFromRequest(Request $request, array $data = [], $keyPrefix = null): Page
     {
         foreach ($data as $key => $field) {
             if (is_array($field)) {
@@ -24,7 +24,7 @@ trait LoadsDataFromRequest
         return $this;
     }
 
-    public static function fromRequest(Request $request = null): self
+    public static function fromRequest(Request $request = null): Page
     {
         $field = app(static::class);
 

@@ -4,7 +4,6 @@ namespace ProtoneMedia\LaravelContent\Fields;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Pipeline\Pipeline;
 
 abstract class Field implements Htmlable, Castable
 {
@@ -19,15 +18,6 @@ abstract class Field implements Htmlable, Castable
     {
         return (new FromInput(static::class, ...$arguments))
             ->withMiddleware(static::defaultInputMiddleware());
-    }
-
-    protected static function middleware($traveler = null, $stops)
-    {
-        return app(Pipeline::class)
-            ->send($traveler)
-            ->through($stops)
-            ->via('execute')
-            ->thenReturn();
     }
 
     //

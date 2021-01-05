@@ -4,6 +4,7 @@ namespace ProtoneMedia\LaravelContent\Fields;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 
 abstract class Field implements Htmlable, Castable
 {
@@ -47,9 +48,9 @@ abstract class Field implements Htmlable, Castable
         return $this->rules;
     }
 
-    public function mergeRules(array $rules): self
+    public function addToRules($rules): self
     {
-        return $this->setRules(array_merge($this->getRules(), $rules));
+        return $this->setRules(array_merge($this->getRules(), Arr::wrap($rules)));
     }
 
     public function setRules(array $rules): self

@@ -10,11 +10,11 @@ class SingleMedia implements Rule
 {
     use ValidatesAttributes;
 
-    private $allowedMimeTypes;
+    private $allowedMimes;
 
-    public function __construct(array $allowedMimeTypes = [])
+    public function __construct(array $allowedMimes = [])
     {
-        $this->allowedMimeTypes = $allowedMimeTypes;
+        $this->allowedMimes = $allowedMimes;
     }
 
     /**
@@ -45,11 +45,11 @@ class SingleMedia implements Rule
             return false;
         }
 
-        if (!empty($this->allowedMimeTypes)) {
-            return $this->validateMimetypes($attribute, $value, $this->allowedMimeTypes);
+        if (!empty($this->allowedMimes)) {
+            return $this->validateMimes($attribute, $value, $this->allowedMimes);
         }
 
-        return false;
+        return true;
     }
 
     /**

@@ -2,13 +2,14 @@
 
 namespace ProtoneMedia\LaravelContent\Fields;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Traits\ForwardsCalls;
-use ProtoneMedia\LaravelContent\Media\MediaRequest;
+use ProtoneMedia\LaravelContent\Rules\SingleMedia;
 
 abstract class SingleMediaField extends Field implements Arrayable, Jsonable
 {
@@ -16,6 +17,21 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
     use InteractsWithMediaRepository;
 
     protected $media;
+
+    public function allowedMimes(): array
+    {
+        return [];
+    }
+
+    public function makeSingleMediaRule(): SingleMedia
+    {
+        return new SingleMedia($this->allowedMimes());
+    }
+
+    public function defaultRules(): array
+    {
+        return [$this->makeSingleMediaRule()];
+    }
 
     public function getMedia()
     {
@@ -79,11 +95,27 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
 
     //
 
-    public static function fromRequest(Request $request = null): MediaRequest
+    public static function fromRequest($requestOrKey = null)
     {
-        return static::resolveDefaultRepository()
+        $request = $requestOrKey instanceof Request
+            ? $requestOrKey
+            : request();
+
+        $mediaRequest = static::resolveDefaultRepository()
             ->fromRequest($request ?: request())
             ->setFieldClass(static::class);
+
+        return ($requestOrKey && !$requestOrKey instanceof Request)
+            ? $mediaRequest->get($requestOrKey)
+            : $mediaRequest;
+    }
+
+    public static function empty(): self
+    {
+        return Container::getInstance()
+            ->makeWith(static::class, [
+                'repository' => static::resolveDefaultRepository(),
+            ]);
     }
 
     //

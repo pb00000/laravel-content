@@ -4,6 +4,7 @@ namespace ProtoneMedia\LaravelContent\Tests\Requests;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\Rule;
 use ProtoneMedia\LaravelContent\Fields\Image;
 use ProtoneMedia\LaravelContent\Media\MediaLibraryRepository;
 use ProtoneMedia\LaravelContent\Tests\Post as PostModel;
@@ -23,13 +24,17 @@ class ImageUploadTest extends TestCase
         $this->app['router']->group(['middleware' => 'web'], function ($router) {
             $router->post('/upload', function (Request $request) {
                 return ImageModel::create([
-                    'title' => Image::fromRequest($request)->get('logo_image'),
+                    'title' => Image::fromRequest('logo_image'),
                 ]);
             });
 
-            $router->post('/validate', function (Request $request) {
+            $router->post('/validate/{size?}', function (Request $request, $size = 10) {
+                Image::fromRequest($request)->prepareForValidation('logo_image');
+
                 $request->validate([
-                    'logo_image' => Image::fromRequest()->get('logo_image')->getRules(),
+                    'logo_image' => Image::empty()
+                        ->addToRules(Rule::dimensions()->minWidth($size)->minHeight($size))
+                        ->getRules(),
                 ]);
 
                 return [];
@@ -90,6 +95,16 @@ class ImageUploadTest extends TestCase
     }
 
     /** @test */
+    public function it_can_validate_an_uploaded_file_with_a_size_check()
+    {
+        $this->setupRoute()
+            ->postJson('/validate/100', [
+                'logo_image' => UploadedFile::fake()->image('logo.png', 50, 50),
+            ])
+            ->assertJsonValidationErrors(['logo_image']);
+    }
+
+    /** @test */
     public function it_can_validate_an_existing_media_model()
     {
         $repository = app(MediaLibraryRepository::class);
@@ -105,5 +120,27 @@ class ImageUploadTest extends TestCase
                 'logo_image' => $media->toArray(),
             ])
             ->assertOk();
+    }
+
+    /** @test */
+    public function it_can_handle_an_unexisting_media_model()
+    {
+        $repository = app(MediaLibraryRepository::class);
+
+        $mediaModel = $repository->storeTemporarily(
+            UploadedFile::fake()->image('logo.png')
+        );
+
+        $media = new Image($mediaModel, $repository);
+
+        $data = $media->toArray();
+
+        $mediaModel->delete();
+
+        $this->setupRoute()
+            ->postJson('/validate', [
+                'logo_image' => $data,
+            ])
+            ->assertJsonValidationErrors(['logo_image']);
     }
 }

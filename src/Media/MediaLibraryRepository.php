@@ -15,6 +15,11 @@ class MediaLibraryRepository implements MediaRepository
         return Media::findOrFail($data['key']);
     }
 
+    public function exists(array $data): bool
+    {
+        return Media::whereKey($data['key'])->exists();
+    }
+
     public function toHtml($value): string
     {
         return $value->toHtml();

@@ -3,6 +3,7 @@
 namespace ProtoneMedia\LaravelContent\Fields;
 
 use ProtoneMedia\LaravelContent\Media\MediaRepository;
+use ProtoneMedia\LaravelContent\Rules\SingleMedia;
 
 class Image extends SingleMediaField
 {
@@ -11,5 +12,10 @@ class Image extends SingleMediaField
         $this->media = $media;
 
         $this->repository = $repository ?: static::resolveDefaultRepository();
+    }
+
+    public function defaultRules(): array
+    {
+        return [new SingleMedia(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'])];
     }
 }

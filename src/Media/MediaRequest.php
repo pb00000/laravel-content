@@ -21,13 +21,28 @@ class MediaRequest
     public function get($key): Field
     {
         if ($file = $this->request->file($key)) {
-            $media = $this->repository->storeTemporarily($file);
-
-            return Container::getInstance()->makeWith($this->fieldClass, [
-                'media'      => $media,
-                'repository' => $this->repository,
-            ]);
+            return $this->resolveMediaIntoField(
+                $this->repository->storeTemporarily($file)
+            );
         }
+
+        $input = $this->request->input($key);
+
+        if (is_array($input)) {
+            $media = Container::getInstance()
+                ->make($input['media_repository_class'])
+                ->find($input);
+
+            return $this->resolveMediaIntoField($media);
+        }
+    }
+
+    private function resolveMediaIntoField($media)
+    {
+        return Container::getInstance()->makeWith($this->fieldClass, [
+            'media'      => $media,
+            'repository' => $this->repository,
+        ]);
     }
 
     public function setFieldClass($fieldClass): self

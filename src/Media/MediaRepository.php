@@ -9,6 +9,8 @@ interface MediaRepository
 {
     public function find(array $data);
 
+    public function exists(array $data): bool;
+
     public function toHtml($value): string;
 
     public function toArray($value): array;

@@ -18,6 +18,10 @@ class CreateTables extends Migration
             $table->string('title');
             $table->timestamps();
         });
+
+        Schema::create('temporary_media', function (Blueprint $table) {
+            $table->bigIncrements('id');
+        });
     }
     /**
      * Reverse the migrations.
@@ -27,5 +31,6 @@ class CreateTables extends Migration
     public function down()
     {
         Schema::dropIfExists('posts');
+        Schema::dropIfExists('temporary_media');
     }
 }

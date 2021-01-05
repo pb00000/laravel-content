@@ -63,7 +63,7 @@ class TextTest extends TestCase
     {
         $this->assertEquals(['string'], (new Text)->getRules());
         $this->assertEquals(['max:5'], (new Text)->setRules(['max:5'])->getRules());
-        $this->assertEquals(['max:5', 'min:3'], (new Text)->setRules(['max:5'])->mergeRules(['min:3'])->getRules());
-        $this->assertEquals(['string', 'min:3'], (new Text)->mergeRules(['min:3'])->getRules());
+        $this->assertEquals(['max:5', 'min:3'], (new Text)->setRules(['max:5'])->addToRules(['min:3'])->getRules());
+        $this->assertEquals(['string', 'min:3'], (new Text)->addToRules(['min:3'])->getRules());
     }
 }

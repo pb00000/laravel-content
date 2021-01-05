@@ -30,7 +30,7 @@ class Image extends Field
             return new static;
         }
 
-        $repository = app($value['repository']);
+        $repository = app($value['media_repository_class']);
 
         $media = $repository->find($value);
 
@@ -42,7 +42,7 @@ class Image extends Field
         return json_encode(
             array_merge(
                 $this->repository->toArray($this->media),
-                ['repository' => get_class($this->repository)]
+                ['media_repository_class' => get_class($this->repository)]
             )
         );
     }

@@ -9,7 +9,7 @@ use ProtoneMedia\LaravelContent\Tests\Post as PostModel;
 use ProtoneMedia\LaravelContent\Tests\TestCase;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Post extends PostModel
+class ImageModel extends PostModel
 {
     protected $casts = [
         'title' => Image::class,
@@ -32,13 +32,13 @@ class ImageTest extends TestCase
     {
         $media = $this->createMediaWithSingleImage();
 
-        $post = Post::create([
+        $post = ImageModel::create([
             'title' => new Image($media),
         ]);
 
         $this->assertEquals(json_encode([
-            'key'        => $media->getKey(),
-            'repository' => MediaLibraryRepository::class,
+            'key'                    => $media->getKey(),
+            'media_repository_class' => MediaLibraryRepository::class,
         ]), DB::table('posts')->value('title'));
 
         $title = $post->fresh()->title;
@@ -52,7 +52,7 @@ class ImageTest extends TestCase
     {
         $media = $this->createMediaWithSingleImage();
 
-        $post = Post::create([
+        $post = ImageModel::create([
             'title' => new Image($media),
         ]);
 
@@ -64,7 +64,7 @@ class ImageTest extends TestCase
     {
         $media = $this->createMediaWithSingleImage();
 
-        $post = Post::create([
+        $post = ImageModel::create([
             'title' => new Image($media),
         ]);
 

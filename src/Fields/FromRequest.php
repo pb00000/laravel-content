@@ -2,26 +2,35 @@
 
 namespace ProtoneMedia\LaravelContent\Fields;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\ForwardsCalls;
 
-class FromInput
+class FromRequest implements ExtractFieldFromRequest
 {
     use ForwardsCalls;
     use InteractsWithMiddleware;
 
     protected $fieldClass;
+    protected $request;
     protected $arguments;
 
-    public function __construct($fieldClass, ...$arguments)
+    public function __construct($fieldClass, Request $request, ...$arguments)
     {
         $this->fieldClass = $fieldClass;
+        $this->request    = $request;
         $this->arguments  = $arguments;
     }
 
-    public function resolve()
+    public function resolve($key): Field
     {
-        $result = Arr::wrap($this->sendThroughMiddleware($this->arguments));
+        $input = $this->request->input($key);
+
+        $arguments = array_merge([$input], $this->arguments);
+
+        $result = Arr::wrap(
+            $this->sendThroughMiddleware($arguments)
+        );
 
         $fieldClass = $this->fieldClass;
 

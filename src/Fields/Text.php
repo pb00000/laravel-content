@@ -26,6 +26,11 @@ class Text extends Field implements Htmlable
         return $this->value;
     }
 
+    public function toJson($options = 0)
+    {
+        return json_encode($this->value, $options);
+    }
+
     //
 
     public static function defaultInputMiddleware(): array

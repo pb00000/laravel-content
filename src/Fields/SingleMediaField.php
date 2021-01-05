@@ -95,19 +95,11 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
 
     //
 
-    public static function fromRequest($requestOrKey = null)
+    public static function fromRequest(Request $request, ...$arguments): ExtractFieldFromRequest
     {
-        $request = $requestOrKey instanceof Request
-            ? $requestOrKey
-            : request();
-
-        $mediaRequest = static::resolveDefaultRepository()
+        return static::resolveDefaultRepository()
             ->fromRequest($request)
             ->setFieldClass(static::class);
-
-        return ($requestOrKey && !$requestOrKey instanceof Request)
-            ? $mediaRequest->get($requestOrKey)
-            : $mediaRequest;
     }
 
     public static function empty(): self

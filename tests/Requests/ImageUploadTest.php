@@ -24,7 +24,7 @@ class ImageUploadTest extends TestCase
         $this->app['router']->group(['middleware' => 'web'], function ($router) {
             $router->post('/upload', function (Request $request) {
                 return ImageModel::create([
-                    'title' => Image::fromRequest('logo_image'),
+                    'title' => Image::fromRequest($request)->resolve('logo_image'),
                 ]);
             });
 

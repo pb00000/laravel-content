@@ -4,9 +4,10 @@ namespace ProtoneMedia\LaravelContent\Media;
 
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
+use ProtoneMedia\LaravelContent\Fields\ExtractFieldFromRequest;
 use ProtoneMedia\LaravelContent\Fields\Field;
 
-class MediaRequest
+class MediaRequest implements ExtractFieldFromRequest
 {
     private MediaRepository $repository;
     private Request $request;
@@ -48,15 +49,17 @@ class MediaRequest
             : null;
     }
 
-    public function get($key): Field
+    public function resolve($key): Field
     {
-        if ($file = $this->request->file($key)) {
-            return $this->resolveMediaIntoField(
-                $this->repository->storeTemporarily($file)
-            );
+        $file = $this->request->file($key);
+
+        if (!$file) {
+            return $this->getExistingMedia($key);
         }
 
-        return $this->getExistingMedia($key);
+        return $this->resolveMediaIntoField(
+            $this->repository->storeTemporarily($file)
+        );
     }
 
     private function resolveMediaIntoField($media)

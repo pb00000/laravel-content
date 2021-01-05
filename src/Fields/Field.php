@@ -4,9 +4,11 @@ namespace ProtoneMedia\LaravelContent\Fields;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-abstract class Field implements Htmlable, Castable
+abstract class Field implements Htmlable, Castable, Jsonable
 {
     protected $rules;
 
@@ -18,6 +20,12 @@ abstract class Field implements Htmlable, Castable
     public static function fromInput(...$arguments): FromInput
     {
         return (new FromInput(static::class, ...$arguments))
+            ->withMiddleware(static::defaultInputMiddleware());
+    }
+
+    public static function fromRequest(Request $request, ...$arguments): ExtractFieldFromRequest
+    {
+        return (new FromRequest(static::class, $request, ...$arguments))
             ->withMiddleware(static::defaultInputMiddleware());
     }
 

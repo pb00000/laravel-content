@@ -24,13 +24,13 @@ trait LoadsDataFromRequest
         return $this;
     }
 
-    public function setDataFromRequest(Request $request): self
-    {
-        return $this->parseArrayFromRequest($request, $this->fields());
-    }
-
     public static function fromRequest(Request $request = null): self
     {
-        return app(static::class)->setDataFromRequest($request ?: request());
+        $field = app(static::class);
+
+        return $field->parseArrayFromRequest(
+            $request ?: request(),
+            $field->fields()
+        );
     }
 }

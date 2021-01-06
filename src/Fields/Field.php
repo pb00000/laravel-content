@@ -37,8 +37,8 @@ abstract class Field implements Htmlable, Castable, Jsonable
     public static function fromInput(...$source): FieldResolver
     {
         $handler = (new MiddlewareHandler)
-            ->withMiddleware(static::defaultInputMiddleware())
-            ->setPassable(...$source);
+            ->withPassable(...$source)
+            ->withMiddleware(static::defaultInputMiddleware());
 
         return new FieldResolver($handler, static::class);
     }

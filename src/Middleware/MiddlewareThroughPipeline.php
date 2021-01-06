@@ -2,8 +2,6 @@
 
 namespace ProtoneMedia\LaravelContent\Middleware;
 
-use Illuminate\Container\Container;
-
 class MiddlewareThroughPipeline
 {
     private $middleware;
@@ -23,8 +21,6 @@ class MiddlewareThroughPipeline
             return $this->middleware->execute(...$arguments);
         }
 
-        return Container::getInstance()
-            ->make($this->middleware)
-            ->execute(...$arguments);
+        return app($this->middleware)->execute(...$arguments);
     }
 }

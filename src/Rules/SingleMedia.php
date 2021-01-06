@@ -2,7 +2,6 @@
 
 namespace ProtoneMedia\LaravelContent\Rules;
 
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 
@@ -31,9 +30,7 @@ class SingleMedia implements Rule
         }
 
         if (is_array($value) && array_key_exists('media_repository_class', $value)) {
-            return Container::getInstance()
-                ->make($value['media_repository_class'])
-                ->exists($value);
+            return app($value['media_repository_class'])->exists($value);
         }
 
         return false;

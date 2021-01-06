@@ -7,10 +7,10 @@ use Illuminate\Support\Arr;
 
 class MiddlewareHandler
 {
-    protected $middleware = [];
     protected $passable;
+    protected $middleware = [];
 
-    public function setPassable(...$passable): self
+    public function withPassable(...$passable): self
     {
         $this->passable = $passable;
 

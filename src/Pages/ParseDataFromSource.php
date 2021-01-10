@@ -6,26 +6,26 @@ use Illuminate\Support\Arr;
 
 class ParseDataFromSource
 {
-    protected $data = [];
+    protected $data;
 
     public function parse($source, array $fields = [], $keyPrefix = null): array
     {
         foreach ($fields as $key => $field) {
+            $fullKey = $keyPrefix . $key;
+
             if (is_array($field)) {
-                return $this->parse($source, $field, "{$key}.");
+                return $this->parse($source, $field, "{$fullKey}.");
             }
 
-            $value = data_get($source, $key);
+            $value = data_get($source, $fullKey);
 
             Arr::set(
                 $this->data,
-                ($keyPrefix . $key),
+                $fullKey,
                 $field::fromInput($value)->resolve()
             );
         }
 
-        return tap($this->data, function () {
-            $this->data = [];
-        });
+        return $this->data;
     }
 }

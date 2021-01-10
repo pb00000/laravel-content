@@ -105,6 +105,10 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable
 
     public function toArray()
     {
+        if (!$this->media) {
+            return null;
+        }
+
         return array_merge(
             $this->repository->toArray($this->media),
             ['media_repository_class' => get_class($this->repository)]

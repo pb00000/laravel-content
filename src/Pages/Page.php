@@ -2,7 +2,9 @@
 
 namespace ProtoneMedia\LaravelContent\Pages;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 abstract class Page
 {
@@ -23,19 +25,36 @@ abstract class Page
 
         $page = app(static::class);
 
-        $data = (new ParseDataFromSource)->parse(
-            $request->all(),
-            $fields = $page->fields()
-        );
+        $data = app(ParseDataFromSource::class)->parse($request->all(), $page->fields());
 
         return $page->setData($data);
     }
 
-    public function saveAsJson($model, $key)
+    public function saveToModel(Model $model)
     {
-        $model->$key = collect($this->data)->toJson();
+        static::wrapArraysInCollections($this->data)->each(function ($value, $key) use ($model) {
+            $model->{$key} = $value->toJson();
+        });
+
+        return tap($model)->save();
+    }
+
+    public function saveAsJson(Model $model, $key)
+    {
+        $model->{$key} = static::wrapArraysInCollections($this->data)->toJson();
         $model->save();
 
         return $model;
+    }
+
+    private static function wrapArraysInCollections(array $data): Collection
+    {
+        foreach ($data as $key => $value) {
+            $data[$key] = is_array($value)
+                    ? Collection::make(static::wrapArraysInCollections($value))
+                    : $value;
+        }
+
+        return Collection::make($data);
     }
 }

@@ -16,6 +16,7 @@ class CreateTables extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
+            $table->json('header')->nullable();
             $table->timestamps();
         });
 

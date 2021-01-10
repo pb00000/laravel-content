@@ -3,6 +3,7 @@
 namespace ProtoneMedia\LaravelContent\Fields;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use Illuminate\Support\Traits\ForwardsCalls;
 use ProtoneMedia\LaravelContent\Middleware\ResolveMedia;
 use ProtoneMedia\LaravelContent\Rules\SingleMedia;
 
-abstract class SingleMediaField extends Field implements Arrayable, Jsonable
+abstract class SingleMediaField extends Field implements Arrayable, Jsonable, Htmlable
 {
     use ForwardsCalls;
     use InteractsWithMediaRepository;

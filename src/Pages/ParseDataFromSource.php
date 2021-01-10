@@ -11,17 +11,16 @@ class ParseDataFromSource
     public function parse($source, array $fields = [], $keyPrefix = null): array
     {
         foreach ($fields as $key => $field) {
-            $fullKey = $keyPrefix . $key;
-
             if (is_array($field)) {
-                return $this->parse($source, $field, "{$fullKey}.");
+                $this->parse($source, $field, "{$keyPrefix}{$key}.");
+                continue;
             }
 
-            $value = data_get($source, $fullKey);
+            $value = data_get($source, "{$keyPrefix}{$key}");
 
             Arr::set(
                 $this->data,
-                $fullKey,
+                "{$keyPrefix}{$key}",
                 $field::fromInput($value)->resolve()
             );
         }

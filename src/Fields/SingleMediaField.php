@@ -94,6 +94,10 @@ abstract class SingleMediaField extends Field implements Arrayable, Jsonable, Ht
         $json = $this->toJson();
 
         static::model($model)->saved(function (Model $savedModel) use ($model) {
+            if (!$this->media) {
+                return;
+            }
+
             if ($savedModel->isNot($model)) {
                 return;
             }

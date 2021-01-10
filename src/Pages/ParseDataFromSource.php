@@ -8,19 +8,14 @@ class ParseDataFromSource
 {
     protected $data;
 
-    public function parse($source, array $fields = [], $keyPrefix = null): array
+    public function parse($source, array $fields = []): array
     {
-        foreach ($fields as $key => $field) {
-            if (is_array($field)) {
-                $this->parse($source, $field, "{$keyPrefix}{$key}.");
-                continue;
-            }
-
-            $value = data_get($source, "{$keyPrefix}{$key}");
+        foreach (Arr::dot($fields) as $key => $field) {
+            $value = data_get($source, $key);
 
             Arr::set(
                 $this->data,
-                "{$keyPrefix}{$key}",
+                $key,
                 $field::fromInput($value)->resolve()
             );
         }

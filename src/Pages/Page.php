@@ -69,7 +69,10 @@ abstract class Page implements ArrayAccess
 
         $page = app(static::class);
 
-        $data = app(ParseDataFromSource::class)->parse($request->all(), $page->fields());
+        $data = app(ParseDataFromSource::class)->parse(
+            $request->all(),
+            $page->fields()
+        );
 
         return $page->setData($data);
     }

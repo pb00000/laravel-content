@@ -4,16 +4,17 @@ namespace ProtoneMedia\LaravelContent\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class ParseDataFromDatabase
 {
     protected $data;
 
-    public function parse(Model $model, $source, array $fields = [], $keyPrefix = null): array
+    public function parse(Model $model, $source, array $fields = []): array
     {
-        foreach ($fields as $key => $field) {
-            if (!is_array($field) && $keyPrefix && $source instanceof Model) {
-                $keys = explode('.', "{$keyPrefix}{$key}");
+        foreach (Arr::dot($fields) as $key => $field) {
+            if ($source instanceof Model && Str::contains($key, '.')) {
+                $keys = explode('.', $key);
 
                 $topLevelKey = array_shift($keys);
 
@@ -21,48 +22,14 @@ class ParseDataFromDatabase
                     json_decode($source->{$topLevelKey}, true),
                     implode('.', $keys)
                 );
-
-                Arr::set(
-                    $this->data,
-                    "{$keyPrefix}{$key}",
-                    $field::fromDatabase($model, "{$keyPrefix}{$key}", $value, [])
-                );
-
-                continue;
+            } else {
+                $value = data_get($source, $key);
             }
-
-            if (is_array($field)) {
-                if ($keyPrefix && $source instanceof Model) {
-                    $keys = explode('.', "{$keyPrefix}{$key}");
-
-                    $topLevelKey = array_shift($keys);
-
-                    $this->parse(
-                        $model,
-                        json_decode($source->{$topLevelKey}, true),
-                        $field,
-                        implode('.', $keys) . '.'
-                    );
-
-                    continue;
-                }
-
-                $this->parse(
-                    $model,
-                    $source,
-                    $field,
-                    "{$keyPrefix}{$key}."
-                );
-
-                continue;
-            }
-
-            $value = data_get($source, "{$keyPrefix}{$key}");
 
             Arr::set(
                 $this->data,
-                "{$keyPrefix}{$key}",
-                $field::fromDatabase($model, "{$keyPrefix}{$key}", $value, [])
+                $key,
+                $field::fromDatabase($model, $key, $value, [])
             );
         }
 

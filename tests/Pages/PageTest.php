@@ -150,7 +150,10 @@ class PageTest extends TestCase
         $page = NestedData::loadFromModel($post);
 
         $this->assertEquals('Main Title', $page['title.main']->getValue());
+        $this->assertEquals('Main Title', $page['title']['main']->getValue());
         $this->assertEquals('Sub 1 Title', $page['title.sub.first']->getValue());
         $this->assertEquals('Sub 2 Title', $page['title.sub.second']->getValue());
+        $this->assertEquals('Sub 2 Title', $page['title']['sub']['second']->getValue());
+        $this->assertInstanceOf(Image::class, $page['header']);
     }
 }

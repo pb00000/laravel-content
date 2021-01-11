@@ -17,9 +17,14 @@ abstract class Page implements ArrayAccess
         return $this->offsetGet($key);
     }
 
+    public function __set($key, $value)
+    {
+        return $this->offsetSet($key, $value);
+    }
+
     public function offsetExists($key)
     {
-        return array_key_exists($key, $this->data);
+        return Arr::has($this->data, $key);
     }
 
     public function offsetGet($key)
@@ -34,7 +39,7 @@ abstract class Page implements ArrayAccess
 
     public function offsetUnset($key)
     {
-        unset($this->data[$key]);
+        Arr::forget($this->data, $key);
     }
 
     abstract public function fields(): array;
@@ -69,7 +74,7 @@ abstract class Page implements ArrayAccess
 
         $page = app(static::class);
 
-        $data = app(ParseDataFromSource::class)->parse(
+        $data = app(ParseDataFromInput::class)->parse(
             $request->all(),
             $page->fields()
         );
@@ -77,8 +82,12 @@ abstract class Page implements ArrayAccess
         return $page->setData($data);
     }
 
-    public function saveToModel(Model $model): Model
+    public function saveToModel(Model $model, $key = null): Model
     {
+        if ($key) {
+            return $this->saveAsJson($model, $key);
+        }
+
         static::wrapArraysInCollections($this->data)->each(function ($value, $key) use ($model) {
             $model->{$key} = $value instanceof Collection
                 ? static::mapCollectionIntoDatabase($value, $model)->toJson()

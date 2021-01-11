@@ -10,21 +10,10 @@ class ParseDataFromDatabase
 {
     protected $data;
 
-    public function parse(Model $model, $source, array $fields = []): array
+    public function parse(Model $model, $target, array $fields = []): array
     {
         foreach (Arr::dot($fields) as $key => $field) {
-            if ($source instanceof Model && Str::contains($key, '.')) {
-                $keys = explode('.', $key);
-
-                $topLevelKey = array_shift($keys);
-
-                $value = data_get(
-                    json_decode($source->{$topLevelKey}, true),
-                    implode('.', $keys)
-                );
-            } else {
-                $value = data_get($source, $key);
-            }
+            $value = static::get($target, $key);
 
             Arr::set(
                 $this->data,
@@ -34,5 +23,20 @@ class ParseDataFromDatabase
         }
 
         return $this->data;
+    }
+
+    private static function get($target, $key)
+    {
+        if ($target instanceof Model && Str::contains($key, '.')) {
+            $keys = explode('.', $key);
+
+            $topLevelKey = array_shift($keys);
+
+            $target = json_decode($target->{$topLevelKey}, true);
+
+            $key = implode('.', $keys);
+        }
+
+        return data_get($target, $key);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace ProtoneMedia\LaravelContent\Fields;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -12,6 +13,12 @@ use ProtoneMedia\LaravelContent\Middleware\MiddlewareHandler;
 abstract class Field implements Htmlable, Castable, Jsonable
 {
     protected $rules;
+    protected $middleware;
+
+    public static function make(array $parameters = []): self
+    {
+        return Container::getInstance()->makeWith(static::class, $parameters);
+    }
 
     public static function defaultInputMiddleware(): array
     {
@@ -23,6 +30,10 @@ abstract class Field implements Htmlable, Castable, Jsonable
         $request = $request ?: request();
 
         return static::fromSource($request->all(), $key);
+    }
+
+    public function beforeSaving(): self
+    {
     }
 
     public static function prepareRequestForValidation($key, Request $request = null)

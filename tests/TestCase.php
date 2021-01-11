@@ -6,12 +6,32 @@ use Illuminate\Database\Eloquent\Model;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use PDO;
 use ProtoneMedia\LaravelContent\ServiceProvider;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
     protected function getPackageProviders($app)
     {
-        return [ServiceProvider::class];
+        return [ServiceProvider::class, MediaLibraryServiceProvider::class];
+    }
+
+    protected function createMediaWithSingleImage(): Media
+    {
+        return Media::create([
+            'model_type'            => 'temp',
+            'model_id'              => 1,
+            'collection_name'       => 'default',
+            'name'                  => 'logo',
+            'file_name'             => 'logo.png',
+            'disk'                  => 'public',
+            'size'                  => 1024,
+            'manipulations'         => [],
+            'custom_properties'     => [],
+            'generated_conversions' => [],
+            'responsive_images'     => [],
+            'mime_type'             => 'image/png',
+        ]);
     }
 
     public function setUp(): void
@@ -27,7 +47,7 @@ class TestCase extends OrchestraTestCase
             'url'            => env('DATABASE_URL'),
             'host'           => env('DB_HOST', '127.0.0.1'),
             'port'           => env('DB_PORT', '3306'),
-            'database'       => env('DB_DATABASE', 'search_test'),
+            'database'       => env('DB_DATABASE', 'laravel_content_test'),
             'username'       => env('DB_USERNAME', 'homestead'),
             'password'       => env('DB_PASSWORD', 'secret'),
             'unix_socket'    => env('DB_SOCKET', ''),
@@ -45,7 +65,9 @@ class TestCase extends OrchestraTestCase
         $this->artisan('migrate:fresh');
 
         include_once __DIR__ . '/create_tables.php';
+        include_once __DIR__ . '/../vendor/spatie/laravel-medialibrary/database/migrations/create_media_table.php.stub';
 
         (new \CreateTables)->up();
+        (new \CreateMediaTable)->up();
     }
 }

@@ -1,4 +1,5 @@
-# Laravel Content
+# [WIP} Laravel Content
+## Don't use in production yet!
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/protonemedia/laravel-content.svg?style=flat-square)](https://packagist.org/packages/protonemedia/laravel-content)
 ![run-tests](https://github.com/protonemedia/laravel-content/workflows/run-tests/badge.svg)
@@ -13,7 +14,89 @@
 
 ## Features
 
-...
+Defining pages:
+
+```php
+use ProtoneMedia\LaravelContent\Fields\Html;
+use ProtoneMedia\LaravelContent\Fields\Image;
+use ProtoneMedia\LaravelContent\Fields\Text;
+use ProtoneMedia\LaravelContent\Pages\Page;
+
+class ContactPage extends Page
+{
+    public function fields(): array
+    {
+        return [
+            'title'    => new Text,
+            'header'   => new Image,
+            'contents' => new Html,
+        ];
+    }
+}
+
+$field = new Html;
+$field = Html::make();
+
+$field = Html::make()
+    ->addToRules([new NoJavascriptRule, new NoExternalHostsRule])  // optional
+    ->beforeSaving(new HtmlPurifier), // optional
+```
+
+Create/update from Request:
+
+```php
+$newPageModel = ContactPage::fromRequest()->validate()->saveToModel(new PageModel);
+
+// from request:
+$contactPage = ContactPage::fromRequest()
+$contactPage = ContactPage::fromRequest($request);
+
+// validation:
+$contactPage->validate();
+$contactPage->getRules();
+$contactPage->getValidator();
+
+// save to database:
+$contactPage->saveToModel($yourModel);
+$contactPage->saveToModel($yourModel, 'field');
+
+$contactPage->toJson();
+```
+
+Fields as Eloquent Casts:
+
+```php
+use ProtoneMedia\LaravelContent\Fields\Image;
+use ProtoneMedia\LaravelContent\Fields\Markdown;
+
+class BlogPost extends Model
+{
+    protected $casts = [
+        'top_image' => Image::class,
+        'contents' => Markdown::class,
+    ];
+}
+```
+
+Media fields can have a custom backend:
+
+```php
+Image::setDefaultRepositoryResolver(function() {
+    return new MediaLibraryRepository;
+});
+```
+
+Fields can be used in Blade views:
+
+```blade
+{{ $page->image }}
+```
+
+Which is equal to:
+
+```php
+$page->image->toHtml();
+```
 
 ## Blogpost
 

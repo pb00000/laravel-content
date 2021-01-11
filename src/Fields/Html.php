@@ -9,6 +9,8 @@ use ProtoneMedia\LaravelContent\Middleware\TrimString;
 
 class Html extends Field implements Htmlable
 {
+    use InteractsWithHtmlSanitizer;
+
     protected $value;
 
     public function __construct(string $value = null)
@@ -53,12 +55,10 @@ class Html extends Field implements Htmlable
 
     public function toHtml(): HtmlString
     {
-        // $content = Purifier::clean($content ?: '', $config);
+        $content = $this->resolveDefaultHtmlSanitizer()->execute($this->value);
 
-        //  mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');
+        mb_convert_encoding($content ?: '', 'HTML-ENTITIES', 'UTF-8');
 
-        return new HtmlString(
-            is_null($this->value) ? $this->value : null
-        );
+        return new HtmlString($content ?: null);
     }
 }

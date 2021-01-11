@@ -2,7 +2,6 @@
 
 namespace ProtoneMedia\LaravelContent\Fields;
 
-use ProtoneMedia\LaravelContent\Media\MediaLibraryRepository;
 use ProtoneMedia\LaravelContent\Media\MediaRepository;
 
 trait InteractsWithMediaRepository
@@ -18,7 +17,7 @@ trait InteractsWithMediaRepository
     protected static function resolveDefaultRepository(): MediaRepository
     {
         $resolver = static::$defaultRepositoryResolver ?: function () {
-            return new MediaLibraryRepository;
+            return app(MediaRepository::class);
         };
 
         return call_user_func($resolver);

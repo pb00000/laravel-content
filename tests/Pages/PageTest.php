@@ -54,7 +54,7 @@ class PageTest extends TestCase
         );
 
         $post = TitleAndHeader::loadFromRequest($request)
-            ->saveAsJson(new Post, 'title');
+            ->saveToModel(new Post, 'title');
 
         $content           = json_decode($post->title, true);
         $content['header'] = json_decode($content['header'], true);
@@ -75,7 +75,7 @@ class PageTest extends TestCase
             UploadedFile::fake()->image('header.jpg')
         );
 
-        $post = TitleAndHeader::loadFromRequest($request)->saveAsJson(new Post, 'title');
+        $post = TitleAndHeader::loadFromRequest($request)->saveToModel(new Post, 'title');
 
         $page = TitleAndHeader::loadFromModel($post, 'title');
 
@@ -99,7 +99,7 @@ class PageTest extends TestCase
         ]);
 
         $post = NestedData::loadFromRequest($request)
-            ->saveAsJson(new Post, 'title');
+            ->saveToModel(new Post, 'title');
 
         $content = json_decode($post->title, true);
 

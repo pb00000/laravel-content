@@ -7,8 +7,10 @@ use Illuminate\Support\HtmlString;
 use ProtoneMedia\LaravelContent\Middleware\ConvertEmptyStringToNull;
 use ProtoneMedia\LaravelContent\Middleware\TrimString;
 
-class Text extends Field implements Htmlable
+class Html extends Field implements Htmlable
 {
+    use InteractsWithHtmlSanitizer;
+
     protected $value;
 
     public function __construct(string $value = null)
@@ -53,8 +55,10 @@ class Text extends Field implements Htmlable
 
     public function toHtml(): HtmlString
     {
-        return new HtmlString(
-            is_null($this->value) ? $this->value : null
-        );
+        $content = $this->resolveDefaultHtmlSanitizer()->execute($this->value);
+
+        mb_convert_encoding($content ?: '', 'HTML-ENTITIES', 'UTF-8');
+
+        return new HtmlString($content ?: null);
     }
 }

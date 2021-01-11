@@ -63,7 +63,7 @@ abstract class Field implements Htmlable, Castable, Jsonable
 
     abstract public static function fromDatabase($model, string $key, $value, array $attributes);
 
-    abstract public function toDatabase($model, string $key, array $attributes);
+    abstract public function toDatabase($model = null, string $key = null, array $attributes = null);
 
     //
 

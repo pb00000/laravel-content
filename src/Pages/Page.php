@@ -97,16 +97,21 @@ abstract class Page implements ArrayAccess
         return tap($model)->save();
     }
 
-    public function saveAsJson(Model $model, $key): Model
+    private function saveAsJson(Model $model, $key): Model
     {
-        $collection = static::wrapArraysInCollections($this->data);
-
-        $model->{$key} = static::mapCollectionIntoDatabase($collection, $model)->toJson();
+        $model->{$key} = $this->toJson($model);
 
         return tap($model)->save();
     }
 
-    private static function mapCollectionIntoDatabase(Collection $data, Model $model): Collection
+    public function toJson(Model $model = null, $options = 0)
+    {
+        $collection = static::wrapArraysInCollections($this->data);
+
+        return static::mapCollectionIntoDatabase($collection, $model)->toJson($options);
+    }
+
+    private static function mapCollectionIntoDatabase(Collection $data, Model $model = null): Collection
     {
         return $data->map(function ($value, $key) use ($model) {
             return $value instanceof Collection

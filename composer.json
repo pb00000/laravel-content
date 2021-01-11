@@ -1,6 +1,6 @@
 {
     "name": "protonemedia/laravel-content",
-    "description": "Laravel package to search through multiple Eloquent models. Supports pagination, eager loading relations, single/multiple columns, sorting and scoped queries.",
+    "description": "Laravel package to handle content.",
     "keywords": [
         "protonemedia",
         "laravel-content"

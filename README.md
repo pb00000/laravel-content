@@ -1,4 +1,5 @@
-# [WIP} Laravel Content
+# [WIP] Laravel Content
+[https://twitter.com/pascalbaljet/status/1348562877230280709](https://twitter.com/pascalbaljet/status/1348562877230280709)
 ## Don't use in production yet!
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/protonemedia/laravel-content.svg?style=flat-square)](https://packagist.org/packages/protonemedia/laravel-content)
@@ -76,6 +77,17 @@ class BlogPost extends Model
         'contents' => Markdown::class,
     ];
 }
+```
+
+Standalone fields:
+
+```php
+$field = Markdown::fromInput(request('contents'))
+    ->withMiddleware(ReplaceOldHostnames::class);
+
+BlogPostModel::first()->update([
+    'contents' => $field->getValue()
+]);
 ```
 
 Media fields can have a custom backend:

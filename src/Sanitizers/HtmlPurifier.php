@@ -5,7 +5,7 @@ namespace ProtoneMedia\LaravelContent\Sanitizers;
 use HTMLPurifier as BasePurifier;
 use HTMLPurifier_Config as BasePurifierConfig;
 
-class HtmlPurifier implements HTMLSanitizer
+class HtmlPurifier implements HtmlSanitizer
 {
     private $config;
     private $instance;

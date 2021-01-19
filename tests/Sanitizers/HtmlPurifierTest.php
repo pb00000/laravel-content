@@ -69,6 +69,21 @@ class HtmlPurifierTest extends TestCase
     }
 
     /** @test */
+    public function it_can_allow_additional_elements_with_an_instance()
+    {
+        $purifier = $this->purifier();
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement(HtmlElement::make('custom-embed'));
+        });
+
+        $this->assertEquals(
+            '<custom-embed>value</custom-embed>',
+            $purifier->execute('<custom-embed src="https://protone.media">value</custom-embed>')
+        );
+    }
+
+    /** @test */
     public function it_can_set_the_content_set_and_allowed_children()
     {
         $purifier = $this->purifier();

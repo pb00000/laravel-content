@@ -161,15 +161,17 @@ class HtmlPurifierConfigFactory
         return $this->config;
     }
 
-    public function allowElement(string $element, callable $withElement = null): self
+    public function allowElement($element, callable $withElement = null): self
     {
-        $htmlElement = new HtmlElement($element);
+        $htmlElement = $element instanceof HtmlElement
+            ? $element
+            : new HtmlElement($element);
 
         if ($withElement) {
             $withElement($htmlElement);
         }
 
-        $this->allowedElements[$element] = $htmlElement;
+        $this->allowedElements[$htmlElement->getElement()] = $htmlElement;
 
         return $this;
     }

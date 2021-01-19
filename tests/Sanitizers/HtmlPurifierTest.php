@@ -56,7 +56,7 @@ class HtmlPurifierTest extends TestCase
             $purifier->execute('<custom-embed src="https://protone.media">value</custom-embed>')
         );
 
-        $purifier->updateConfig(function ($config) {
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
             $config->allowElement('custom-embed', function (HtmlElement $element) {
                 $element->allowAttribute('src');
             });
@@ -65,6 +65,82 @@ class HtmlPurifierTest extends TestCase
         $this->assertEquals(
             '<custom-embed src="https://protone.media">value</custom-embed>',
             $purifier->execute('<custom-embed src="https://protone.media">value</custom-embed>')
+        );
+    }
+
+    /** @test */
+    public function it_can_set_the_content_set_and_allowed_children()
+    {
+        $purifier = $this->purifier();
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->inlineChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->blockContent());
+        });
+
+        $this->assertEquals(
+            '<span></span><div>content</div>',
+            $purifier->execute('<span><div>content</div></span>')
+        );
+
+        //
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->inlineChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->inlineContent());
+        });
+
+        $this->assertEquals(
+            '<span><div>content</div></span>',
+            $purifier->execute('<span><div>content</div></span>')
+        );
+
+        //
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->inlineChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->inlineContent());
+        });
+
+        $this->assertEquals(
+            '<span><div>content</div></span>',
+            $purifier->execute('<span><div>content</div></span>')
+        );
+
+        //
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->anyChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->blockContent());
+        });
+
+        $this->assertEquals(
+            '<span><div>content</div></span>',
+            $purifier->execute('<span><div>content</div></span>')
+        );
+
+        //
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->noChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->blockContent());
+        });
+
+        $this->assertEquals(
+            '<span /><div>content</div>',
+            $purifier->execute('<span><div>content</div></span>')
+        );
+
+        //
+
+        $purifier->updateConfig(function (HtmlPurifierConfigFactory $config) {
+            $config->allowElement('span', fn (HtmlElement $element) => $element->noChildrenAllowed());
+            $config->allowElement('div', fn (HtmlElement $element) => $element->inlineContent());
+        });
+
+        $this->assertEquals(
+            '<span /><div>content</div>',
+            $purifier->execute('<span><div>content</div></span>')
         );
     }
 }

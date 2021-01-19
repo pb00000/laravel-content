@@ -5,7 +5,13 @@ namespace ProtoneMedia\LaravelContent\Sanitizers;
 class HtmlAttribute
 {
     private $attribute;
-    private $_def = 'Text';
+
+    /**
+     * Attribute definition, can be string or object, see HTMLPurifier_AttrTypes for details
+     *
+     * @var mixed
+     */
+    private $validValues = 'Text';
 
     public function __construct(string $attribute)
     {
@@ -17,9 +23,9 @@ class HtmlAttribute
         return $this->attribute;
     }
 
-    public function _getDef()
+    public function getValidValues()
     {
-        return $this->_def;
+        return $this->validValues;
     }
 
     public static function make(string $attribute): self

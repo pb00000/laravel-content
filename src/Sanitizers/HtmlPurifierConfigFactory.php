@@ -2,12 +2,16 @@
 
 namespace ProtoneMedia\LaravelContent\Sanitizers;
 
+use HTMLPurifier_ChildDef_List;
 use HTMLPurifier_Config;
+use HTMLPurifier_HTMLDefinition;
 use Illuminate\Support\Collection;
 
 class HtmlPurifierConfigFactory
 {
     private $config;
+
+    private HTMLPurifier_HTMLDefinition $htmlDefinition;
 
     private $allowedElements;
 
@@ -48,53 +52,52 @@ class HtmlPurifierConfigFactory
     private function initAllowedElements()
     {
         $this->allowedElements = [
-            'a'          => HtmlElement::make('a'),
-            'address'    => HtmlElement::make('address'),
-            'article'    => HtmlElement::make('article'),
-            'aside'      => HtmlElement::make('aside'),
-            'b'          => HtmlElement::make('b'),
-            'blockquote' => HtmlElement::make('blockquote'),
-            'br'         => HtmlElement::make('br'),
-            'del'        => HtmlElement::make('del'),
-            'div'        => HtmlElement::make('div'),
-            'em'         => HtmlElement::make('em'),
-            'figcaption' => HtmlElement::make('figcaption'),
-            'figure'     => HtmlElement::make('figure'),
-            'footer'     => HtmlElement::make('footer'),
-            'h1'         => HtmlElement::make('h1'),
-            'h2'         => HtmlElement::make('h2'),
-            'h3'         => HtmlElement::make('h3'),
-            'h4'         => HtmlElement::make('h4'),
-            'h5'         => HtmlElement::make('h5'),
-            'h6'         => HtmlElement::make('h6'),
-            'header'     => HtmlElement::make('header'),
-            'hgroup'     => HtmlElement::make('hgroup'),
-            'i'          => HtmlElement::make('i'),
+            'a'          => HtmlElement::make('a')->inlineContent()->inlineChildrenAllowed(),
+            'address'    => HtmlElement::make('address')->blockContent()->inlineChildrenAllowed(),
+            'article'    => HtmlElement::make('article')->blockContent()->anyChildrenAllowed(),
+            'aside'      => HtmlElement::make('aside')->blockContent()->anyChildrenAllowed(),
+            'b'          => HtmlElement::make('b')->inlineContent()->inlineChildrenAllowed(),
+            'blockquote' => HtmlElement::make('blockquote')->blockContent(),
+            'br'         => HtmlElement::make('br')->inlineContent()->noChildrenAllowed(),
+            'del'        => HtmlElement::make('del')->blockContent(),
+            'div'        => HtmlElement::make('div')->blockContent()->anyChildrenAllowed(),
+            'em'         => HtmlElement::make('em')->inlineContent()->inlineChildrenAllowed(),
+            'figcaption' => HtmlElement::make('figcaption')->inlineContent(),
+            'figure'     => HtmlElement::make('figure')->blockContent(),
+            'footer'     => HtmlElement::make('footer')->blockContent()->anyChildrenAllowed(),
+            'h1'         => HtmlElement::make('h1')->headingContent()->inlineChildrenAllowed(),
+            'h2'         => HtmlElement::make('h2')->headingContent()->inlineChildrenAllowed(),
+            'h3'         => HtmlElement::make('h3')->headingContent()->inlineChildrenAllowed(),
+            'h4'         => HtmlElement::make('h4')->headingContent()->inlineChildrenAllowed(),
+            'h5'         => HtmlElement::make('h5')->headingContent()->inlineChildrenAllowed(),
+            'h6'         => HtmlElement::make('h6')->headingContent()->inlineChildrenAllowed(),
+            'header'     => HtmlElement::make('header')->blockContent()->anyChildrenAllowed(),
+            'hgroup'     => HtmlElement::make('hgroup')->blockContent(),
+            'i'          => HtmlElement::make('i')->inlineContent()->inlineChildrenAllowed(),
             'iframe'     => HtmlElement::make('iframe'),
-            'img[src]'   => HtmlElement::make('img')->allowAttribute('src'),
-            'ins'        => HtmlElement::make('ins'),
-            'li'         => HtmlElement::make('li'),
-            'mark'       => HtmlElement::make('mark'),
-            'nav'        => HtmlElement::make('nav'),
-            'ol'         => HtmlElement::make('ol'),
-            'p'          => HtmlElement::make('p'),
-            's'          => HtmlElement::make('s'),
-            's'          => HtmlElement::make('s'),
-            'section'    => HtmlElement::make('section'),
-            'source'     => HtmlElement::make('source'),
-            'span'       => HtmlElement::make('span'),
-            'strong'     => HtmlElement::make('strong'),
-            'sub'        => HtmlElement::make('sub'),
-            'sup'        => HtmlElement::make('sup'),
+            'img'        => HtmlElement::make('img')->allowAttribute('src'),
+            'ins'        => HtmlElement::make('ins')->blockContent(),
+            'li'         => HtmlElement::make('li')->manualContent()->anyChildrenAllowed(),
+            'mark'       => HtmlElement::make('mark')->inlineContent(),
+            'nav'        => HtmlElement::make('nav')->blockContent()->anyChildrenAllowed(),
+            'ol'         => HtmlElement::make('ol')->listContent()->childrenAllowed(new HTMLPurifier_ChildDef_List),
+            'p'          => HtmlElement::make('p')->blockContent()->inlineChildrenAllowed(),
+            's'          => HtmlElement::make('s')->inlineContent(),
+            'section'    => HtmlElement::make('section')->blockContent()->anyChildrenAllowed(),
+            'source'     => HtmlElement::make('source')->blockContent(),
+            'span'       => HtmlElement::make('span')->inlineContent()->inlineChildrenAllowed(),
+            'strong'     => HtmlElement::make('strong')->inlineContent()->inlineChildrenAllowed(),
+            'sub'        => HtmlElement::make('sub')->inlineContent()->inlineChildrenAllowed(),
+            'sup'        => HtmlElement::make('sup')->inlineContent()->inlineChildrenAllowed(),
             'table'      => HtmlElement::make('table'),
             'td'         => HtmlElement::make('td'),
             'th'         => HtmlElement::make('th'),
             'tr'         => HtmlElement::make('tr'),
-            'u'          => HtmlElement::make('u'),
-            'ul'         => HtmlElement::make('ul'),
-            'var'        => HtmlElement::make('var'),
-            'video'      => HtmlElement::make('video'),
-            'wbr'        => HtmlElement::make('wbr'),
+            'u'          => HtmlElement::make('u')->inlineContent(),
+            'ul'         => HtmlElement::make('ul')->listContent()->childrenAllowed(new HTMLPurifier_ChildDef_List),
+            'var'        => HtmlElement::make('var')->inlineContent(),
+            'video'      => HtmlElement::make('video')->blockContent(),
+            'wbr'        => HtmlElement::make('wbr')->inlineContent(),
         ];
     }
 
@@ -125,47 +128,50 @@ class HtmlPurifierConfigFactory
         return $this;
     }
 
-    private function getAllElements(): array
-    {
-        return $this->allowedElements;
-    }
-
     public function create(): HTMLPurifier_Config
     {
         $this->setAllowedElements();
 
-        $HTMLDefinition = $this->config->maybeGetRawHTMLDefinition(true);
+        $htmlDefinition = $this->config->maybeGetRawHTMLDefinition(true);
 
-        if (!$HTMLDefinition) {
+        if (!$htmlDefinition) {
             return $this->config;
         }
 
-        foreach ($this->getAllElements() as $element) {
-            $HTMLDefinition->addElement(
+        $this->htmlDefinition = $htmlDefinition;
+
+        Collection::make($this->allowedElements)->each(function (HtmlElement $element) {
+            $this->htmlDefinition->addElement(
                 $element->getElement(),
-                $element->_getType(),
-                $element->_getContents(),
-                $element->_getAttrCollections(),
+                $element->getContentSet(),
+                $element->getAllowedChildren(),
+                $element->getAttributeCollection(),
                 $element->_getAttributes(),
             );
 
-            foreach ($element->getAttributes() as $attribute) {
-                $HTMLDefinition->addAttribute($element->getElement(), $attribute->getAttribute(), $attribute->_getDef());
-            }
-        }
+            Collection::make($element->getAttributes())->each(function (HtmlAttribute $attribute) use ($element) {
+                $this->htmlDefinition->addAttribute(
+                    $element->getElement(),
+                    $attribute->getAttribute(),
+                    $attribute->getValidValues()
+                );
+            });
+        });
 
         return $this->config;
     }
 
-    public function allowElement(string $element, callable $withElement = null): self
+    public function allowElement($element, callable $withElement = null): self
     {
-        $htmlElement = new HtmlElement($element);
+        $htmlElement = $element instanceof HtmlElement
+            ? $element
+            : new HtmlElement($element);
 
         if ($withElement) {
             $withElement($htmlElement);
         }
 
-        $this->allowedElements[$element] = $htmlElement;
+        $this->allowedElements[$htmlElement->getElement()] = $htmlElement;
 
         return $this;
     }

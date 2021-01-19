@@ -30,7 +30,8 @@ class HtmlPurifier implements HtmlSanitizer
 
         $withConfig($defaultConfig);
 
-        $this->config   = $defaultConfig->create();
+        $this->config = $defaultConfig->create();
+
         $this->instance = null;
 
         return $this;

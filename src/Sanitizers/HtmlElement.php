@@ -144,7 +144,7 @@ class HtmlElement
         return $this->allowedChildren;
     }
 
-    public function childrenAllowed(HTMLPurifier_ChildDef $allowedChildren): self
+    public function withAllowedChildren($allowedChildren): self
     {
         $this->allowedChildren = $allowedChildren;
 

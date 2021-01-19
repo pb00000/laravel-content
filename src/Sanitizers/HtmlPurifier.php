@@ -15,20 +15,25 @@ class HtmlPurifier implements HTMLSanitizer
         $this->config = $config ?: BasePurifierConfig::createDefault();
     }
 
-    public function withConfig(callable $callable): self
-    {
-        call_user_func($callable, $this->config);
-
-        return $this;
-    }
-
-    private function getInstance(): BasePurifier
+    public function getInstance(): BasePurifier
     {
         if (!$this->instance) {
             return new BasePurifier($this->config);
         }
 
         return $this->instance;
+    }
+
+    public function updateConfig(callable $withConfig): self
+    {
+        $defaultConfig = new HtmlPurifierConfigFactory($this->config);
+
+        $withConfig($defaultConfig);
+
+        $this->config   = $defaultConfig->create();
+        $this->instance = null;
+
+        return $this;
     }
 
     public function execute($value = null): ?string

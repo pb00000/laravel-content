@@ -2,6 +2,8 @@
 [https://twitter.com/pascalbaljet/status/1348562877230280709](https://twitter.com/pascalbaljet/status/1348562877230280709)
 ## Don't use in production yet!
 
+### This package will be a companion to [Form Components Pro](https://formcomponents.pro).
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/protonemedia/laravel-content.svg?style=flat-square)](https://packagist.org/packages/protonemedia/laravel-content)
 ![run-tests](https://github.com/protonemedia/laravel-content/workflows/run-tests/badge.svg)
 [![Quality Score](https://img.shields.io/scrutinizer/g/protonemedia/laravel-content.svg?style=flat-square)](https://scrutinizer-ci.com/g/protonemedia/laravel-content)

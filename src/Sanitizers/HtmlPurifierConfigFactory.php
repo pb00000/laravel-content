@@ -20,6 +20,7 @@ class HtmlPurifierConfigFactory
 
         if (!is_null($config)) {
             $allConfig = $config->getAll();
+
             $allConfig['HTML']['DefinitionRev']++;
 
             $this->config->loadArray($allConfig);
@@ -42,7 +43,6 @@ class HtmlPurifierConfigFactory
             $config->loadArray([
                 'Cache.SerializerPath'        => $cachePath,
                 'Cache.SerializerPermissions' => $mode,
-                'HTML.DefinitionID'           => static::class,
                 'HTML.DefinitionRev'          => 1,
             ]);
         });
@@ -69,6 +69,7 @@ class HtmlPurifierConfigFactory
             })
             ->tap(function (Collection $elements) {
                 $this->config->set('HTML.Allowed', $elements->implode(','));
+                $this->config->set('HTML.DefinitionID', md5(json_encode($this->allowedElements)));
             });
 
         $htmlDefinition = $this->config->maybeGetRawHTMLDefinition(true);

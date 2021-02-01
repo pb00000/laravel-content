@@ -14,6 +14,7 @@
 
 * PHP 7.4+
 * Laravel 6.0 and higher
+123
 
 ## Features
 
